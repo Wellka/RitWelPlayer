@@ -1,4 +1,5 @@
-CREATE TABLE Benutzer(ID SERIAL,
+CREATE TABLE Benutzer(
+	ID SERIAL,
 	Vorname VARCHAR(100) NOT NULL,
 	Nachname VARCHAR(100) NULL,
 	Benutzer VARCHAR(100) NULL UNIQUE,
@@ -50,7 +51,7 @@ CREATE TABLE Musikdaten_Album (
 	ID_Album INTEGER REFERENCES Album(ID)
 );
 
-CREATE TABLE Musikdaten_Gerne (
+CREATE TABLE Musikdaten_Genre (
 	ID_Musik INTEGER REFERENCES Musikdaten(ID),
 	ID_Genre INTEGER REFERENCES Genre(ID)
 );

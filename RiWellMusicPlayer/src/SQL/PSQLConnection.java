@@ -254,4 +254,43 @@ public class PSQLConnection {
 		}
 		return true;
 	}	
+	
+	public boolean createUser(Statement statement, String username, String userpassword){
+		System.out.println(statement);
+		if(username.isEmpty())
+			return false;
+		String querry = "CREATE USER \"" + username + "\" WITH CREATEDB PASSWORD '"+ userpassword  +"';"; 
+		
+		try {
+			statement.execute(querry);
+			System.out.println(querry);
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	public boolean createDatabase(Statement statement, String dbname, String owner){
+		String querry = "CREATE DATABASE ";
+		if(dbname.equals(""))
+			return false;
+		
+		querry += "\"" + dbname + "\" ";
+		
+		if(!owner.isEmpty()){
+			querry += "WITH OWNER \"" + owner + "\"";
+		}
+		querry += ";";
+		try {
+			System.out.println(querry);
+			statement.execute(querry);
+			System.out.println(querry);
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 }

@@ -1,8 +1,8 @@
 #Projekt:Database file search
-#Erstellungsdatum: <8:45:11> 17.11.2012
-#Mon Dec 17 08:45:11 CET 2012
+#Erstellungsdatum: <17:36:14> 7.1.2013
+#Thu Feb 07 17:36:14 CET 2013
 CONNECTIONNAME=localhost
-DATABASE=MusikPlayer
+DATABASE=MusikPlayerDB
 USER=postgres
 PORT=5432
 PASSWORD=postgres

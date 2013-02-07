@@ -3,7 +3,6 @@ package Frames;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.Frame;
 
 import javax.swing.JButton;
@@ -17,10 +16,6 @@ import javax.swing.SwingConstants;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.Serializable;
-import java.sql.Savepoint;
 
 import javax.swing.JCheckBox;
 
@@ -92,7 +87,7 @@ public class DlgLogIn extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			
 			JButton btnNewButton = new JButton("Account Erstellen");
-			final JDialog dlg1 = this;
+			//final JDialog dlg1 = this;
 			btnNewButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					//new DlgAccountCreation(dlg1, true);
