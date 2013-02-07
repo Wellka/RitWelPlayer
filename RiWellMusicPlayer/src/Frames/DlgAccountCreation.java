@@ -190,6 +190,7 @@ public class DlgAccountCreation extends JDialog {
 				statement.execute(querry);
 				return true;
 			} catch (SQLException e) {
+				System.out.println(e.getErrorCode());
 				e.printStackTrace();
 				return false;
 			}

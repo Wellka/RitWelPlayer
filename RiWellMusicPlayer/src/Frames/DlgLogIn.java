@@ -44,6 +44,7 @@ public class DlgLogIn extends JDialog {
 	}
 	public DlgLogIn(Frame frm,boolean modal) {
 		super(frm, modal);
+		setTitle("Login");
 		result = -1;
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 303, 268);
@@ -142,6 +143,13 @@ public class DlgLogIn extends JDialog {
 	public void setStatus(String text, Color color){
 		lblStatus.setForeground(color);
 		lblStatus.setText(text);
+	}
+	
+	public void setVisible(boolean vis){
+		if(vis){
+			result = -1;
+		}
+		super.setVisible(vis);
 	}
 	
 }
