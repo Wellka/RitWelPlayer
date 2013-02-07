@@ -1,7 +1,9 @@
 package Frames;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Frame;
 
 import javax.swing.JButton;
@@ -15,6 +17,11 @@ import javax.swing.SwingConstants;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.Serializable;
+import java.sql.Savepoint;
+
 import javax.swing.JCheckBox;
 
 public class DlgLogIn extends JDialog {
@@ -26,15 +33,20 @@ public class DlgLogIn extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JTextField textField;
 	private JPasswordField passwordField;
+	private int result;
 
+	private JLabel lblStatus;
 	/**
 	 * Create the dialog.
 	 */
+	public DlgLogIn(){
+		this(null, true);
+	}
 	public DlgLogIn(Frame frm,boolean modal) {
 		super(frm, modal);
-		
+		result = -1;
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 303, 244);
+		setBounds(100, 100, 303, 268);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -69,6 +81,10 @@ public class DlgLogIn extends JDialog {
 		JCheckBox chckbxPasswortMerken = new JCheckBox("Passwort merken");
 		chckbxPasswortMerken.setBounds(137, 149, 140, 23);
 		contentPanel.add(chckbxPasswortMerken);
+		
+		lblStatus = new JLabel("");
+		lblStatus.setBounds(10, 172, 267, 14);
+		contentPanel.add(lblStatus);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -78,7 +94,9 @@ public class DlgLogIn extends JDialog {
 			final JDialog dlg1 = this;
 			btnNewButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					new DlgAccountCreation(dlg1, true);
+					//new DlgAccountCreation(dlg1, true);
+					result = 2;//dialog erstellen
+					setVisible(false);
 				}
 			});
 			btnNewButton.setHorizontalAlignment(SwingConstants.LEADING);
@@ -87,6 +105,7 @@ public class DlgLogIn extends JDialog {
 				JButton okButton = new JButton("OK");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
+						result = 1;
 						setVisible(false);
 					}
 				});
@@ -107,4 +126,22 @@ public class DlgLogIn extends JDialog {
 		}
 		setVisible(modal);
 	}
+	
+	public String getPassword(){
+		return new String(passwordField.getPassword());
+	}
+	
+	public String getUsername(){
+		return textField.getText();
+	}
+	
+	public int getResult(){
+		return result;
+	}
+	
+	public void setStatus(String text, Color color){
+		lblStatus.setForeground(color);
+		lblStatus.setText(text);
+	}
+	
 }

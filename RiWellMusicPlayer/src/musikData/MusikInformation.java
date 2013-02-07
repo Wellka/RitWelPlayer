@@ -72,28 +72,30 @@ public class MusikInformation {
 			first = false;
 			genre += t.getFirst(tagf.getId());
 		}	
+		System.out.println("gerne: "+ genre);
 		titel = t.getFirst(FieldKey.TITLE);
 		this.pfad = path;
-		
-		try {
-			albumArt = t.getArtworkList().get(0).getImage();
-			albumArt.flush();
-			new JFrame(){
-				private static final long serialVersionUID = 1L;
-				
-				public void init() {
-					JLabel pnl = new JLabel();
-					getContentPane().add(pnl, BorderLayout.CENTER);
-					System.out.println(albumArt);
-					pnl.setIcon(new ImageIcon(albumArt));//(albumArt, 0, 0, this);
-					pack();
-					setVisible(true);
-				}
-			}.init();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if(t.getArtworkList().size() > 0){
+			try {
+				albumArt = t.getArtworkList().get(0).getImage();
+				albumArt.flush();
+				new JFrame(){
+					private static final long serialVersionUID = 1L;
+					
+					public void init() {
+						JLabel pnl = new JLabel();
+						getContentPane().add(pnl, BorderLayout.CENTER);
+						System.out.println(albumArt);
+						pnl.setIcon(new ImageIcon(albumArt));//(albumArt, 0, 0, this);
+						pack();
+						setVisible(true);
+					}
+				}.init();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}	
 	}
 	
 	public MusikInformation(String interpet, String album, String titel, String pfad, BufferedImage albumArt) {

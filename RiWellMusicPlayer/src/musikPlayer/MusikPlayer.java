@@ -5,6 +5,7 @@ public abstract class MusikPlayer{
 	String filename;
 	boolean bStopped = false;
 	MusikPlayer mp;
+	
 	public MusikPlayer(String filename) {
 		this.filename = filename;
 		mp = this;

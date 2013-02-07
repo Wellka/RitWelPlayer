@@ -56,13 +56,11 @@ public class PSQLConnection {
 		Properties prop = new Properties();
 
 		try {
-			prop.load(new FileInputStream(new File("path")));
+			prop.load(new FileInputStream(new File(path)));
 		} catch (IOException e) {
 			System.out.println("Datei " + path + "konnte nicht geöffnet oder gefunden werden.");
 			System.err.println(e);
 		}
-		
-		
 		
 		connect(prop.getProperty(Defines.CONNECTIONNAME, ""),
 				Integer.parseInt(prop.getProperty(Defines.CONNECTIONPORT, "0")),
@@ -97,8 +95,10 @@ public class PSQLConnection {
 		
 		try{
 			//treiber laden
+			
 			Class.forName("org.postgresql.Driver").newInstance();
 			connection = DriverManager.getConnection("jdbc:postgresql://" + serverAdress +":" + port + "/"+ database, username, password);
+			//TODO datenbank selbsstädnig anlegen
 			if(connection == null)
 				return false;
 			connected = true; //connection anzeigen
@@ -217,15 +217,19 @@ public class PSQLConnection {
 			
 			String lineContent;
 			System.out.println(fi.ready());
-			while(fi.ready()){
+			String text = "";
+			while(fi.ready()){ //solange zeilen vorhanden sind
 				lines++;
-				//zeilen aus daeti in batch speicher übernehmen
+				//zeilen aus daeti in übernehmen
 				lineContent = fi.readLine();
-				statement.addBatch(lineContent);
+				lineContent = lineContent.replace("\r", " ");
+				lineContent = lineContent.replace("\n", " ");
+				lineContent = lineContent.replace("\t", " ");
+				text += lineContent;
 			}
 			
-			//in batch geschriebene zeilen ausführen
-			if(statement.executeBatch() == null){
+			//in zusammen geschriebene zeilen ausführen
+			if(statement.execute(text)){
 				System.err.println("Fehler beim ausführen der Datei");
 				fi.close();
 				return false;
@@ -237,6 +241,7 @@ public class PSQLConnection {
 		} catch (SQLException e) {
 			System.err.println("Fehler beim verwerten des scripts:");
 			e.printStackTrace();
+			System.err.println("Fehler: "+e.getNextException());
 			return false;
 		} catch (FileNotFoundException e) {
 			System.err.println("Datei konnte nicht gefunden werden");
