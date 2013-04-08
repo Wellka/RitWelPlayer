@@ -262,6 +262,7 @@ public class PSQLConnection {
 		String querry = "CREATE USER \"" + username + "\" WITH CREATEDB PASSWORD '"+ userpassword  +"';"; 
 		
 		try {
+			System.out.println(querry);
 			statement.execute(querry);
 			System.out.println(querry);
 			return true;
