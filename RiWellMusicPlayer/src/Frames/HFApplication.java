@@ -53,6 +53,7 @@ public class HFApplication {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.setResizable(false);
 		frame.setBounds(100, 100, 726, 480);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -72,19 +73,19 @@ public class HFApplication {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		btnPlay.setBounds(162, 389, 89, 23);
+		btnPlay.setBounds(157, 411, 89, 23);
 		frame.getContentPane().add(btnPlay);
 		
 		JButton btnStop = new JButton("Stop");
-		btnStop.setBounds(261, 389, 89, 23);
+		btnStop.setBounds(256, 411, 89, 23);
 		frame.getContentPane().add(btnStop);
 		
 		JButton btnForw = new JButton("<<");
-		btnForw.setBounds(360, 389, 49, 23);
+		btnForw.setBounds(388, 411, 49, 23);
 		frame.getContentPane().add(btnForw);
 		
 		JButton btnBack = new JButton(">>");
-		btnBack.setBounds(419, 389, 49, 23);
+		btnBack.setBounds(447, 411, 49, 23);
 		frame.getContentPane().add(btnBack);
 		
 		JPanel pnlPic = new JPanel();
@@ -92,11 +93,11 @@ public class HFApplication {
 		frame.getContentPane().add(pnlPic);
 		
 		JPanel pnlLogo = new JPanel();
-		pnlLogo.setBounds(554, 11, 146, 49);
+		pnlLogo.setBounds(554, 11, 156, 49);
 		frame.getContentPane().add(pnlLogo);
 		
 		JLabel lblTrack = new JLabel("");
-		lblTrack.setBounds(139, 417, 375, 25);
+		lblTrack.setBounds(144, 375, 375, 25);
 		frame.getContentPane().add(lblTrack);
 		
 		JButton btnAddBuddy = new JButton("Add Buddy");
