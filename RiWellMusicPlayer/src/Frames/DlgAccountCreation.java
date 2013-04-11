@@ -152,9 +152,6 @@ public class DlgAccountCreation extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 		}
-		Benutzername.setText("1");
-		edtEmail.setText("2");
-		edtEmailConfirm.setText("3");
 		
 		edtFirstName = new JTextField();
 		edtFirstName.setBounds(201, 170, 138, 20);

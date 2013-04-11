@@ -11,6 +11,7 @@ import javax.swing.JFormattedTextField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.text.NumberFormat;
+import javax.swing.JCheckBox;
 
 public class DlgConnectionOption extends JDialog {
 	private static final long serialVersionUID = 1L;
@@ -32,7 +33,7 @@ public class DlgConnectionOption extends JDialog {
 		super(dlg, modal);
 		setTitle("Verbindungsoptionen");
 		setResizable(false);
-		setBounds(100, 100, 430, 243);
+		setBounds(100, 100, 503, 272);
 		getContentPane().setLayout(new BorderLayout());
 		
 		JPanel ContentPane = new JPanel();
@@ -43,10 +44,10 @@ public class DlgConnectionOption extends JDialog {
 		ContentPane.add(panel, BorderLayout.NORTH);
 		
 		JLabel lblWarunungUndSo = new JLabel("<HTML>" +
-				"Hier wird einmal eine warnung stehen\r\n" +
-				"<br>Hier wird einmal eine warnung stehen\r\n" +
-				"<br>Hier wird einmal eine warnung stehen\r\n" +
-				"<br>Hier wird einmal eine warnung stehen" +
+				"Hinweis:\r\n" +
+				"<br>Bitte geben Sie die Daten für den Datenbank-Connect an.\r\n" +
+				"<br>Bei SU-Rechten kann die Datenbank direkt angelegt werden.\r\n" +
+				"<br>" +
 				"</HTML>");
 		panel.add(lblWarunungUndSo);
 		
@@ -54,42 +55,64 @@ public class DlgConnectionOption extends JDialog {
 		ContentPane.add(panel_1, BorderLayout.CENTER);
 		panel_1.setLayout(null);
 		
-		JLabel lblDatenbank = new JLabel("Server Adresse");
-		lblDatenbank.setBounds(10, 11, 102, 14);
+		final JLabel lblDatenbank = new JLabel("Server Adresse");
+		lblDatenbank.setBounds(10, 11, 172, 14);
 		panel_1.add(lblDatenbank);
 		
-		JLabel lblServerPort = new JLabel("Server Port");
-		lblServerPort.setBounds(10, 36, 102, 14);
+		final JLabel lblServerPort = new JLabel("Server Port");
+		lblServerPort.setBounds(10, 36, 172, 14);
 		panel_1.add(lblServerPort);
 		
-		JLabel lblSuperUserLogin = new JLabel("Superuser Login");
-		lblSuperUserLogin.setBounds(10, 61, 102, 14);
+		final JLabel lblSuperUserLogin = new JLabel("DB User Login");
+		lblSuperUserLogin.setBounds(10, 61, 172, 14);
 		panel_1.add(lblSuperUserLogin);
 		
-		JLabel lblSuperUserPasswort = new JLabel("Superuser Passwort");
-		lblSuperUserPasswort.setBounds(10, 86, 102, 14);
+		final JLabel lblSuperUserPasswort = new JLabel("DB User Passwort");
+		lblSuperUserPasswort.setBounds(10, 86, 172, 14);
 		panel_1.add(lblSuperUserPasswort);
 		
 		edtServerAddress = new JTextField();
-		edtServerAddress.setBounds(147, 8, 257, 20);
+		edtServerAddress.setBounds(192, 11, 257, 20);
 		panel_1.add(edtServerAddress);
 		edtServerAddress.setColumns(10);
 		
 		edtLogin = new JTextField();
 		edtLogin.setColumns(10);
-		edtLogin.setBounds(147, 58, 257, 20);
+		edtLogin.setBounds(192, 61, 257, 20);
 		panel_1.add(edtLogin);
 		
 		edtPassword = new JTextField();
 		edtPassword.setColumns(10);
-		edtPassword.setBounds(147, 83, 257, 20);
+		edtPassword.setBounds(192, 86, 257, 20);
 		panel_1.add(edtPassword);
 		
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setGroupingUsed(false);
 		formattedTextField = new JFormattedTextField(nf);
-		formattedTextField.setBounds(147, 33, 257, 20);
+		formattedTextField.setBounds(192, 36, 257, 20);
 		panel_1.add(formattedTextField);
+		
+		final JCheckBox chckbxDatenbankAnlegen = new JCheckBox("Datenbank anlegen");
+		chckbxDatenbankAnlegen.setBounds(192, 113, 129, 23);
+		panel_1.add(chckbxDatenbankAnlegen);
+		chckbxDatenbankAnlegen.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				if( chckbxDatenbankAnlegen.isSelected() )
+				{
+					lblSuperUserLogin.setText("DB Superuser Login");
+					lblSuperUserPasswort.setText("DB Superuser Passwort");
+				}
+				else
+				{
+					lblSuperUserLogin.setText("DB User Login");
+					lblSuperUserPasswort.setText("DB User Passwort");
+				}
+			}
+		});
+		
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -119,6 +142,8 @@ public class DlgConnectionOption extends JDialog {
 			}
 		}
 		setVisible(true);
+		
+//7cbx
 	}
 	
 	public String getServerName(){
