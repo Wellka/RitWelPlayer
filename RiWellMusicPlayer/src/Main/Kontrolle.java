@@ -11,9 +11,9 @@ import javax.swing.JOptionPane;
 
 import cal.Encriptions;
 
-import Frames.DlgAccountCreation;
-import Frames.DlgConnectionOption;
-import Frames.DlgLogIn;
+import Frames.Dialogs.DlgAccountCreation;
+import Frames.Dialogs.DlgConnectionOption;
+import Frames.Dialogs.DlgLogIn;
 import SQL.PSQLConnection;
 
 
