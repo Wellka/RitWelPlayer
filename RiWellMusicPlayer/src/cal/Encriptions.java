@@ -25,7 +25,7 @@ public abstract class Encriptions {
 	    //hashing
 	    md5.reset();
 	    md5.update(string.getBytes());
-	    byte[] result = md5.digest();
+	    byte[] result = md5.digest(); //result buffer 
 	 
 	    //String zusammenbauen
 	    StringBuffer hexString = new StringBuffer();
@@ -37,9 +37,6 @@ public abstract class Encriptions {
 	    	}
 	    	hexString.append(s);
 	    }
-	 
 	    return hexString.toString();
 	}	
-	
-	
 }

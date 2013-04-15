@@ -18,7 +18,7 @@ import java.awt.Color;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class HFApplication {
+public class FrmMain {
 
 	private JFrame frame;
 	private JTable tblMusik;
@@ -32,7 +32,7 @@ public class HFApplication {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					HFApplication window = new HFApplication();
+					FrmMain window = new FrmMain();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -44,7 +44,7 @@ public class HFApplication {
 	/**
 	 * Create the application.
 	 */
-	public HFApplication() {
+	public FrmMain() {
 		initialize();
 	}
 
