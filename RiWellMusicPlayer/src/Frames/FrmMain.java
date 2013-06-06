@@ -99,7 +99,7 @@ public class FrmMain {
 		pnlLogo.setBounds(554, 11, 160, 50);
 		frame.getContentPane().add(pnlLogo);
 		try {
-			pnlLogo.setImage(ImageIO.read(new File("C:\\Temp\\player 1.jpg")));
+			pnlLogo.setImage(ImageIO.read(new File(getClass().getResource("/resource/player.jpg").getPath())));
 		} catch (IOException e1) {}
 		
 		JLabel lblTrack = new JLabel("");

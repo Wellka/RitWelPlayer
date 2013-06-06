@@ -76,7 +76,7 @@ public class DlgLogIn extends JDialog {
 		panel.setBounds(63, 11, 160, 50);
 		contentPanel.add(panel);
 		try {
-			panel.setImage(ImageIO.read(new File("C:\\Temp\\player 1.jpg")));
+			panel.setImage(ImageIO.read(new File(getClass().getResource("/resource/player.jpg").getFile())));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
