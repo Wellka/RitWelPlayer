@@ -16,8 +16,8 @@ import java.util.Properties;
 
 /**				_.-'CLASS'-._
  * 
- * Author(en): Kay Wellinger
- * Datum : 5.11.2012
+ *@author: Kay Wellinger
+ *@Datum : 5.11.2012
  * 
  * Beschreibung:
  * 		Stellt eine verbindung zu einem PostgresSQL server her.

@@ -1,13 +1,17 @@
 package musikData;
 
-import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Calendar;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -19,13 +23,17 @@ import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 import org.jaudiotagger.tag.TagField;
 
+import SQL.PSQLConnection;
+
 public class MusikInformation {
 
+	public static final int INVALID_ID = -1;
 	private String interpet = "";
 	private String album = "";
 	private String titel = "";
 	private String pfad = "";
 	private String genre = "";
+	private int id = INVALID_ID;	
 
 	private BufferedImage albumArt;
 	
@@ -73,20 +81,9 @@ public class MusikInformation {
 		this.pfad = path;
 		if(t.getArtworkList().size() > 0){
 			try {
+				//albumart speichern
 				albumArt = t.getArtworkList().get(0).getImage();
 				albumArt.flush();
-				new JFrame(){
-					private static final long serialVersionUID = 1L;
-					
-					public void init() {
-						JLabel pnl = new JLabel();
-						getContentPane().add(pnl, BorderLayout.CENTER);
-						System.out.println(albumArt);
-						pnl.setIcon(new ImageIcon(albumArt));//(albumArt, 0, 0, this);
-						pack();
-						setVisible(true);
-					}
-				}.init();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -94,7 +91,7 @@ public class MusikInformation {
 		}	
 	}
 	
-	public MusikInformation(String interpet, String album, String titel, String pfad, BufferedImage albumArt) {
+	public MusikInformation(String interpet, String album, String titel, String pfad, BufferedImage albumArt, int id) {
 		super();
 		
 		this.interpet = interpet;
@@ -102,6 +99,7 @@ public class MusikInformation {
 		this.titel = titel;
 		this.pfad = pfad;
 		this.albumArt = albumArt;
+		this.id = id;
 	}
 
 	public String getPfad() {
@@ -144,5 +142,129 @@ public class MusikInformation {
 		//TODO set albumart data
 	}
 	
-
+	public int getID(){
+		return this.id;
+	}
+	
+	public boolean setID(int id){
+		if(this.id  == INVALID_ID){
+			this.id = id;
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * @author Kay Wellinger
+	 * @param sql sql verbindung
+	 * @return sql querry
+	 */
+	public String uploadToDatabase(PSQLConnection sql, int userID) throws SQLException{
+		Connection con = sql.getConnection();
+		//Statement statement = null;
+		PreparedStatement prepState = null;
+		
+		ResultSet res;
+		
+		int idGenre = 0; 
+		int idInterpret = 0;
+		int idAlbum = 0;
+		
+		/*try {
+			statement = con.createStatement();
+		} catch (SQLException e) {
+			return null;
+		}*/
+		//ab hier ist das meiste copy and paste, leider so gelöst weil sql eigenartig ist
+		//Genre abfragen und ggf erstellen
+		String query = "SELECT id FROM genre WHERE genre = ?;";
+		prepState = con.prepareStatement(query);
+		prepState.setString(1, this.genre);
+		res = prepState.executeQuery();
+		//res = statement.executeQuery(query);
+		if(res.next()){
+			idGenre = res.getInt(1);
+		}else{
+			String queryinner = "INSERT INTO genre (genre) VALUES (?);";
+			PreparedStatement innerState = con.prepareStatement(queryinner);
+			innerState.setString(1, this.genre);
+			innerState.execute();
+			
+			res = prepState.executeQuery();
+			if(res.next())
+				idGenre = res.getInt(1);
+		}
+		
+		//interpret
+		query = "SELECT id FROM interpret WHERE interpret = ?;";
+		prepState = con.prepareStatement(query);
+		prepState.setString(1, this.interpet);
+		res = prepState.executeQuery();
+		if(res.next()){
+			idInterpret = res.getInt(1);
+		}else{
+			String queryinner = "INSERT INTO interpret (interpret) VALUES (?);";
+			PreparedStatement innerState = con.prepareStatement(queryinner);
+			innerState.setString(1, this.interpet);
+			innerState.execute();
+			
+			res = prepState.executeQuery();
+			if(res.next())
+				idInterpret = res.getInt(1);
+		}
+		
+		//album
+		query = "SELECT id FROM album WHERE albumname = ?;";
+		//res = statement.executeQuery(query);
+		prepState = con.prepareStatement(query);
+		prepState.setString(1, this.album);
+		res = prepState.executeQuery();
+		
+		if(res.next()){
+			idAlbum = res.getInt(1);
+		}else{
+			String queryinner = "INSERT INTO album (albumname) VALUES (?);";
+			PreparedStatement innerState = con.prepareStatement(queryinner);
+			innerState.setString(1, this.album);
+			innerState.execute();
+			
+			res = prepState.executeQuery();
+			if(res.next())
+				idAlbum = res.getInt(1);
+		}
+		
+		query = "INSERT INTO musikdaten (titel, benutzer_id, timestamp) VALUES (?, '" + userID + "',?) RETURNING id;";
+				
+		//res = statement.executeQuery(query);
+		//res = statement.getGeneratedKeys();
+		prepState = con.prepareStatement(query);
+		prepState.setString(1, this.titel);
+		
+		//Date(int year, int month, int day)
+		prepState.setDate(2, new Date(Calendar.getInstance().get(Calendar.DATE)));
+		res = prepState.executeQuery();
+		
+		if(res.next()){
+			System.out.println("_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-");
+			id = res.getInt(1);
+			
+			query = "INSERT INTO musikdaten_album (id_musik, id_album) VALUES (?, ?);";
+			prepState = con.prepareStatement(query);
+			prepState.setInt(1, id);
+			prepState.setInt(2, idAlbum);
+			prepState.execute();
+			query = "INSERT INTO musikdaten_genre (id_musik, id_genre) VALUES (?, ?);";
+			prepState = con.prepareStatement(query);
+			prepState.setInt(1, id);
+			prepState.setInt(2, idGenre);
+			prepState.execute();
+			query = "INSERT INTO musikdaten_interpret (id_musik, id_interpret) VALUES (?, ?);";
+			prepState = con.prepareStatement(query);
+			prepState.setInt(1, id);
+			prepState.setInt(2, idInterpret);
+			prepState.execute();
+		}  
+		
+		return query;
+	}
 }

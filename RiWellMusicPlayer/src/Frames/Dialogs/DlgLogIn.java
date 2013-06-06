@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -16,8 +17,12 @@ import javax.swing.SwingConstants;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JCheckBox;
+
+import cal.ImagePanel;
 
 public class DlgLogIn extends JDialog {
 
@@ -42,7 +47,7 @@ public class DlgLogIn extends JDialog {
 		setTitle("Login");
 		result = -1;
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 303, 268);
+		setBounds(100, 100, 303, 237);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -50,32 +55,35 @@ public class DlgLogIn extends JDialog {
 		
 		{
 			textField = new JTextField();
-			textField.setBounds(137, 91, 140, 20);
+			textField.setBounds(137, 78, 140, 20);
 			contentPanel.add(textField);
 			textField.setColumns(10);
 		}
 		
 		passwordField = new JPasswordField();
-		passwordField.setBounds(137, 122, 140, 20);
+		passwordField.setBounds(137, 109, 140, 20);
 		contentPanel.add(passwordField);
 		
 		JLabel lblNewLabel = new JLabel("Login Name:");
-		lblNewLabel.setBounds(10, 94, 117, 14);
+		lblNewLabel.setBounds(10, 81, 117, 14);
 		contentPanel.add(lblNewLabel);
 		
 		JLabel lblPasswort = new JLabel("Passwort:");
-		lblPasswort.setBounds(10, 125, 117, 14);
+		lblPasswort.setBounds(10, 112, 117, 14);
 		contentPanel.add(lblPasswort);
 		
-		JPanel panel = new JPanel();
-		panel.setBounds(10, 11, 267, 69);
+		ImagePanel panel = new ImagePanel();
+		panel.setBounds(63, 11, 160, 50);
 		contentPanel.add(panel);
-		
-		JLabel lblTodoImage = new JLabel("TODO IMAGE");
-		panel.add(lblTodoImage);
+		try {
+			panel.setImage(ImageIO.read(new File("C:\\Temp\\player 1.jpg")));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		JCheckBox chckbxPasswortMerken = new JCheckBox("Passwort merken");
-		chckbxPasswortMerken.setBounds(137, 149, 140, 23);
+		chckbxPasswortMerken.setBounds(137, 136, 140, 23);
 		contentPanel.add(chckbxPasswortMerken);
 		
 		lblStatus = new JLabel("");

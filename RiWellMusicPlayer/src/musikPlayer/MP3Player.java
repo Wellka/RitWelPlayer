@@ -31,6 +31,7 @@ public class MP3Player extends MusikPlayer{
 			System.err.printf("%s\n", e.getMessage());
 		}
 
+		bStopped = false;
 		new Thread() {
 			@Override
 			public void run() {
@@ -53,22 +54,10 @@ public class MP3Player extends MusikPlayer{
 	}
 	
 	public boolean isDone(){
-		return !bStopped;
+		if(player == null)
+			return true;
+		if(player.isComplete())
+			bStopped = true;
+		return bStopped;
 	}
-
-
-	// ///////////////////////
-
-	/**
-	 * Plays '01 Maenam.mp3' in an infinite loop
-	 */
-	/*
-	 * public static void playMaenam() { MP3 mp3 = new MP3("./01 Maenam.mp3");
-	 * 
-	 * mp3.play();
-	 * 
-	 * while (true) { if (mp3.player.isComplete()) { mp3.close(); mp3.play(); }
-	 * } }
-	 */
-
 }

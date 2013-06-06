@@ -13,7 +13,7 @@ CREATE TABLE Musikdaten (
 	Titel VARCHAR(100) NULL,
 	Benutzer_ID INTEGER NOT NULL REFERENCES Benutzer(ID),
 	Timestamp date NOT NULL,
-	TimeLength INTEGER,
+	data bytea,
 	PRIMARY KEY(ID)
 );
 

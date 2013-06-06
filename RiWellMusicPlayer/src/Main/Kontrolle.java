@@ -9,8 +9,13 @@ import java.sql.Statement;
 
 import javax.swing.JOptionPane;
 
+import musikData.MusikInformation;
+import musikPlayer.MP3Player;
+import musikPlayer.MusikPlayer;
+
 import cal.Encriptions;
 
+import Frames.FrmMain;
 import Frames.Dialogs.DlgAccountCreation;
 import Frames.Dialogs.DlgConnectionOption;
 import Frames.Dialogs.DlgLogIn;
@@ -25,19 +30,6 @@ public class Kontrolle {
 	
 	public Kontrolle(){
 		boolean loggedIn = false;
-		//Anmeldefenster anzeigen
-		//MusikInformation mInformation = new MusikInformation("C:\\Musik\\We Came As Romans - What I Wished I Never Had - Understanding What We've Grown to Be.mp3");
-		/*MusikPlayer mp3 = new MP3Player("C:\\Musik\\wait and bleed - slipknot.mp3");
-		mp3.playADemo(10000); //TODO zeit aus optionen übernehmen
-		while (mp3.isDone()){
-			try {
-				System.out.println();
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}*/
 		
 		//datenbankverbindung herstellen
 		if(!init()){
@@ -45,7 +37,7 @@ public class Kontrolle {
 			return;
 		}
 		
-		
+		//anmeldefenster anzeigen
 		DlgLogIn logInDLG = new DlgLogIn();
 		//loggin prüfen
 		while(!loggedIn){
@@ -73,8 +65,7 @@ public class Kontrolle {
 				logInDLG.setVisible(true);
 			}
 		}
-		//TODO programmstart
- 		
+		FrmMain frmMain = new FrmMain(this);
 	}
 	
 	private String getPasswordByUsername(String username){
@@ -118,6 +109,7 @@ public class Kontrolle {
 		}
 		return true;
 	}
+	
 	private PSQLConnection connectToDB(){
 		PSQLConnection con = null;
 		if(!new File("./connection.login").exists()){//prüfen ob login datei vorhanden
@@ -180,5 +172,28 @@ public class Kontrolle {
 			return true;
 		}
 		return false;
+	}
+	
+	MusikPlayer mp3Player;
+	public void playMusik(String file){
+		if(mp3Player != null){
+			if(!mp3Player.isDone())
+				mp3Player.stop();
+		}
+		
+		mp3Player = new MP3Player(file);
+		mp3Player.play(); //TODO zeit aus optionen übernehmen
+	}
+	
+	public void stopMusik(){
+		if(mp3Player != null){
+			if(!mp3Player.isDone()){
+				mp3Player.stop();
+			}
+		}
+	}
+	
+	public PSQLConnection getSqlConnection(){
+		return psqlCon;
 	}
 }
