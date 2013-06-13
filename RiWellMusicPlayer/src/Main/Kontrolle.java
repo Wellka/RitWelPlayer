@@ -1,25 +1,27 @@
 package Main;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.io.File;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.awt.Color;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import musikData.MusikInformation;
 import musikPlayer.MP3Player;
 import musikPlayer.MusikPlayer;
-
-import cal.Encriptions;
-
 import Frames.FrmMain;
 import Frames.Dialogs.DlgAccountCreation;
 import Frames.Dialogs.DlgConnectionOption;
 import Frames.Dialogs.DlgLogIn;
 import SQL.PSQLConnection;
+import cal.Encriptions;
 
 
 public class Kontrolle {
@@ -27,9 +29,22 @@ public class Kontrolle {
 	private PSQLConnection psqlCon;
 	private Connection connection;
 	private Statement statement;	 
+	private int activeUserID;
+	private ArrayList<Integer> myFriends = null;
+	
+	//x//TODO Albumscover mit hoch
+	//TODO GROUP BY SHIT
+	//TODO Search funktion
+	//TODO musik nach buddy sortieren
+	//TODO passwort speichern löschen
+	
+	//TODO KAY hat vielleicht heute noch bock liste
+	//TODO 	- Lokal löschen
 	
 	public Kontrolle(){
 		boolean loggedIn = false;
+		
+		setUIFont (new javax.swing.plaf.FontUIResource(new Font("Arial",Font.PLAIN, 12)));
 		
 		//datenbankverbindung herstellen
 		if(!init()){
@@ -49,6 +64,7 @@ public class Kontrolle {
 				if(!MD5DBpw.equals("")){
 					if(MD5DBpw.equals(Encriptions.StringToMD5(logInDLG.getPassword()))){
 						loggedIn = true;
+						activeUserID = getIDByUsername(logInDLG.getUsername());
 					}
 				}	
 				if(!loggedIn){
@@ -65,7 +81,7 @@ public class Kontrolle {
 				logInDLG.setVisible(true);
 			}
 		}
-		FrmMain frmMain = new FrmMain(this);
+		new FrmMain(this);
 	}
 	
 	private String getPasswordByUsername(String username){
@@ -73,6 +89,32 @@ public class Kontrolle {
 			ResultSet res = statement.executeQuery("SELECT passwort FROM Benutzer WHERE Benutzer.benutzer = '" + username + "';");
 			res.next();
 			return res.getString(1);
+		} catch (SQLException e) {
+			return "";
+		}
+	}
+	
+	private int getIDByUsername(String username){
+		try {
+			PreparedStatement ps = connection.prepareStatement("SELECT id FROM Benutzer WHERE Benutzer.benutzer = ?;");
+			ps.setString(1, username);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next())
+				return rs.getInt(1);
+			return -1;
+		} catch (SQLException e) {
+			return -1;
+		}
+	}
+	
+	public String getUserNameById(int id){
+		try {
+			PreparedStatement ps = connection.prepareStatement("SELECT benutzer FROM Benutzer WHERE id = ?;");
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next())
+				return rs.getString(1);
+			return "";
 		} catch (SQLException e) {
 			return "";
 		}
@@ -92,7 +134,7 @@ public class Kontrolle {
 			try {
 				statement = connection.createStatement();
 				if(!psqlCon.checkIfDatabaseInstalled(statement, "Benutzer")){
-					if(!psqlCon.copyFileToDatabase(statement, ClassLoader.getSystemResource("./scripts/setupscript.sql").getPath())){
+					if(!psqlCon.copyFileToDatabase(statement, new File("./setupscript.sql").getAbsolutePath())){
 						System.err.println("Lasst alle hoffnung fahren");
 						return false;
 					}
@@ -114,7 +156,7 @@ public class Kontrolle {
 		PSQLConnection con = null;
 		if(!new File("./connection.login").exists()){//prüfen ob login datei vorhanden
 			//TODO daten angeben fenster, dieses mit fertigen daten füllen
-			con = new PSQLConnection("localhost", 5432, "MusikPlayerDB", "RWMP", "RWMP");
+			con = new PSQLConnection("localhost", 5432, "dbprojekt", "projekt", "geheim");
 			con.saveToFile("./connection.login");
 		}
 		else
@@ -137,7 +179,7 @@ public class Kontrolle {
 	private boolean setupDatabase(){
 		DlgConnectionOption dlg = new DlgConnectionOption();
 		if(dlg.getResult() == 1){
-			psqlCon = new PSQLConnection(dlg.getServerName(), dlg.getServerPort(), dlg.getLogin(), dlg.getLogin(), dlg.getPassword());
+			psqlCon = new PSQLConnection(dlg.getServerName(), dlg.getServerPort(), dlg.getDatabase(), dlg.getLogin(), dlg.getPassword());
 			if(psqlCon.isConnected()){
 				try {
 					statement = psqlCon.getConnection().createStatement();
@@ -195,5 +237,71 @@ public class Kontrolle {
 	
 	public PSQLConnection getSqlConnection(){
 		return psqlCon;
+	}
+	
+	public int getActiveUserID(){
+		return activeUserID;
+	}
+	public static final int ALL_USERS = -1;
+	public ArrayList<MusikInformation> getAllMusikFromDB(int onlyFromUser) throws SQLException{
+		ArrayList<MusikInformation> musikinformations =  new ArrayList<MusikInformation>();
+		/*"SELECT md.id,md.benutzer_id,md.titel,g.genre,a.albumname,i.interpret FROM musikdaten md "+
+		"INNER JOIN musikdaten_album ma ON md.id = ma.id_musik "+
+		"INNER JOIN musikdaten_genre mg ON md.id = mg.id_musik "+
+		"INNER JOIN musikdaten_interpret mi ON md.id = mi.id_musik "+
+		"INNER JOIN genre g ON g.id = mg.id_genre "+
+		"INNER JOIN interpret i ON mi.id_interpret = i.id "+
+		"INNER JOIN album a ON ma.id_album = a.id;"; */
+		String query = "SELECT * FROM alletitel;";
+				
+		ResultSet result = statement.executeQuery(query);
+	
+		while(result.next()){
+			int idUser = result.getInt(2); //id benutzer
+			if( idUser == onlyFromUser || onlyFromUser == ALL_USERS)
+				musikinformations.add(new MusikInformation(result.getString(6), result.getString(5), result.getString(3), "",result.getString(4), result.getInt(2), null, result.getInt(1)));
+		}
+		return musikinformations;
+	}
+
+	private static void setUIFont(javax.swing.plaf.FontUIResource f)
+	{
+	    java.util.Enumeration keys = UIManager.getDefaults().keys();
+	    while (keys.hasMoreElements())
+	    {
+	        Object key = keys.nextElement();
+	        Object value = UIManager.get(key);
+	        if (value instanceof javax.swing.plaf.FontUIResource)
+	        {
+	            UIManager.put(key, f);
+	        }
+	    }
+	}
+	
+	public boolean updateUserFriends(){
+		ArrayList<Integer> returns = null;
+		try {
+			PreparedStatement ps = connection.prepareStatement("SELECT DISTINCT id_benutzer2 FROM benutzer_benutzer WHERE id_benutzer1 = ?");
+			ps.setInt(1, activeUserID);
+			ResultSet rs = ps.executeQuery();
+			returns =  new ArrayList<Integer>();
+			
+			while(rs.next()){
+				returns.add(rs.getInt(1));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		myFriends = returns;
+		if(returns == null)
+			return false;
+		return true;
+	}
+	
+	public ArrayList<Integer> getUserFriends(){
+		if(myFriends == null){
+			updateUserFriends();
+		}
+		return myFriends;
 	}
 }

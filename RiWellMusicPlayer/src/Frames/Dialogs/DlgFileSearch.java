@@ -4,36 +4,30 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.DefaultListModel;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JCheckBox;
-import javax.swing.ListSelectionModel;
-
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
-import javax.swing.UIManager;
-import javax.swing.JList;
-import javax.swing.JProgressBar;
-
-import SQL.PSQLConnection;
-
-import musikData.MusikInformation;
-
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
+
+import musikData.MusikInformation;
+import Main.Kontrolle;
+import SQL.PSQLConnection;
 import cal.FileFunction;
 import cal.fileTreeSearch.FileSearchListener;
 import cal.fileTreeSearch.TreeFileSearch;
@@ -50,12 +44,12 @@ public class DlgFileSearch extends JDialog implements FileSearchListener {
 	private JLabel lblCurrentFile;
 	private JButton btnClose;
 	private JButton btnStart;
-	private JCheckBox cbxUploadFound;
 	private PSQLConnection connection;
 	private ArrayList<MusikInformation> musikInformations =new ArrayList<MusikInformation>();
 	private int currentUserId;
 	/**
 	 * Create the dialog.
+	 * @wbp.parser.constructor
 	 */
 	public DlgFileSearch(PSQLConnection con, int userID){
 		this(null, true, con, userID);
@@ -120,7 +114,7 @@ public class DlgFileSearch extends JDialog implements FileSearchListener {
 			lstPath = new JList(listModel);
 		// Nur eins auswählen
 		lstPath.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		lstPath.setBorder(UIManager.getBorder("PopupMenu.border"));
+		//lstPath.setBorder(UIManager.getBorder("PopupMenu.border"));
 		lstPath.setBounds(10, 36, 460, 132);
 		contentPanel.add(lstPath);
 		{
@@ -184,6 +178,8 @@ public class DlgFileSearch extends JDialog implements FileSearchListener {
 				if (!workerThread.isAlive()) {
 					workerThread = new Thread() {
 						public void run() {
+							if(listModel.size() <= 0)
+								return;
 							// Progressbar daten Setzen
 							progressBar.setMinimum(0);
 							progressBar.setMaximum(listModel.getSize());
@@ -229,7 +225,6 @@ public class DlgFileSearch extends JDialog implements FileSearchListener {
 		contentPanel.add(btnStart);
 
 		JPanel Bevel = new JPanel();
-		Bevel.setBorder(UIManager.getBorder("MenuBar.border"));
 		Bevel.setBounds(0, 264, 480, 3);
 		contentPanel.add(Bevel);
 
@@ -254,10 +249,6 @@ public class DlgFileSearch extends JDialog implements FileSearchListener {
 		JLabel lblTotal = new JLabel("Total:");
 		lblTotal.setBounds(10, 306, 75, 14);
 		contentPanel.add(lblTotal);
-		
-		cbxUploadFound = new JCheckBox("Upload Found?");
-		cbxUploadFound.setBounds(360, 234, 120, 23);
-		contentPanel.add(cbxUploadFound);
 		
 		this.setResizable(false);
 		pack();
@@ -301,11 +292,9 @@ public class DlgFileSearch extends JDialog implements FileSearchListener {
 			e.printStackTrace();
 		}
 		musikInformations.add(mi);
-		if (cbxUploadFound.isSelected()) {
-			System.out.println("uploading file");
-			FileFunction.uploadFile("musikdaten", "data", this.connection.getConnection(), lastfilePath, mi.getID());
-			System.out.println("Finished uploading");
-		}
+		System.out.println("uploading file");
+		FileFunction.uploadFile("musikdaten", "data", this.connection.getConnection(), lastfilePath, currentUserId);
+		System.out.println("Finished uploading");
 	}
 
 	@Override

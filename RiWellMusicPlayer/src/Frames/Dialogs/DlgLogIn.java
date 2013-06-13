@@ -4,23 +4,21 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Frame;
-
-import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 import cal.ImagePanel;
 
@@ -47,7 +45,7 @@ public class DlgLogIn extends JDialog {
 		setTitle("Login");
 		result = -1;
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 303, 237);
+		setBounds(100, 100, 303, 209);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -76,15 +74,11 @@ public class DlgLogIn extends JDialog {
 		panel.setBounds(63, 11, 160, 50);
 		contentPanel.add(panel);
 		try {
-			panel.setImage(ImageIO.read(new File(getClass().getResource("/resource/player.jpg").getFile())));
+			panel.setImage(ImageIO.read(new File("./player.jpg")));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
-		JCheckBox chckbxPasswortMerken = new JCheckBox("Passwort merken");
-		chckbxPasswortMerken.setBounds(137, 136, 140, 23);
-		contentPanel.add(chckbxPasswortMerken);
 		
 		lblStatus = new JLabel("");
 		lblStatus.setBounds(10, 172, 267, 14);

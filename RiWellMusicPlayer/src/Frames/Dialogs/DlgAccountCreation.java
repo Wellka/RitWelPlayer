@@ -3,22 +3,21 @@ package Frames.Dialogs;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JPasswordField;
-import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 import cal.Encriptions;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 public class DlgAccountCreation extends JDialog {
 
@@ -66,12 +65,12 @@ public class DlgAccountCreation extends JDialog {
 		}
 		{
 			JLabel lblPasswort = new JLabel("Passwort:");
-			lblPasswort.setBounds(10, 49, 78, 14);
+			lblPasswort.setBounds(10, 49, 181, 14);
 			contentPanel.add(lblPasswort);
 		}
 		{
 			JLabel lblNewLabel = new JLabel("Passwort best\u00E4tigen:");
-			lblNewLabel.setBounds(10, 80, 138, 14);
+			lblNewLabel.setBounds(10, 80, 181, 14);
 			contentPanel.add(lblNewLabel);
 		}
 		{
@@ -86,12 +85,17 @@ public class DlgAccountCreation extends JDialog {
 		Benutzername.setColumns(10);
 		
 		JButton btnTestUsername = new JButton("C");
+		btnTestUsername.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+			}
+		});
 		btnTestUsername.setToolTipText("Pr\u00FCfen ob dieser benutzername schon vorhanden ist");
 		btnTestUsername.setBounds(307, 12, 32, 23);
 		contentPanel.add(btnTestUsername);
 		
 		JLabel lblBenutzername = new JLabel("Benutzername");
-		lblBenutzername.setBounds(10, 18, 78, 14);
+		lblBenutzername.setBounds(10, 18, 181, 14);
 		contentPanel.add(lblBenutzername);
 		
 		edtEmail = new JTextField();
@@ -105,15 +109,15 @@ public class DlgAccountCreation extends JDialog {
 		edtEmailConfirm.setColumns(10);
 		
 		JLabel lblEmailadresse = new JLabel("E-Mail Adresse:");
-		lblEmailadresse.setBounds(10, 111, 138, 14);
+		lblEmailadresse.setBounds(10, 111, 181, 14);
 		contentPanel.add(lblEmailadresse);
 		
 		JLabel lblEmailAdresseBesttigen = new JLabel("E-Mail Adresse best\u00E4tigen:");
-		lblEmailAdresseBesttigen.setBounds(10, 142, 138, 14);
+		lblEmailAdresseBesttigen.setBounds(10, 142, 181, 14);
 		contentPanel.add(lblEmailAdresseBesttigen);
 		
 		JLabel lblEmpfolenVon = new JLabel("Vorname:");
-		lblEmpfolenVon.setBounds(10, 173, 138, 14);
+		lblEmpfolenVon.setBounds(10, 173, 181, 14);
 		contentPanel.add(lblEmpfolenVon);
 		
 		edtSecondName = new JTextField();
@@ -159,7 +163,7 @@ public class DlgAccountCreation extends JDialog {
 		edtFirstName.setColumns(10);
 		
 		JLabel lblNachname = new JLabel("Nachname:");
-		lblNachname.setBounds(10, 204, 138, 14);
+		lblNachname.setBounds(10, 204, 181, 14);
 		contentPanel.add(lblNachname);
 		setVisible(modal);
 	}

@@ -56,8 +56,9 @@ public final class FileFunction {
 		return true;
 	}
 	private final static String DEFAULT_PATH = "./Download/"; 
+	
 	public static boolean checkIfFileAlreadyDownloaded(MusikInformation mi){
-		String path = DEFAULT_PATH + mi.getInterpet() +" - "+ mi.getAlbum() +" - " + mi.getTitel() +"mp3";
+		String path = DEFAULT_PATH + mi.getInterpet() +" - "+ mi.getAlbum() +" - " + mi.getTitel() +".mp3";
 		if(new File(path).exists()){
 			return true;
 		}
@@ -66,10 +67,19 @@ public final class FileFunction {
 	public static String downloadToFile(String table, String colName, Connection con, MusikInformation mi) throws SQLException{
 		if(mi.getID() == MusikInformation.INVALID_ID)
 			return "";
-		String path = DEFAULT_PATH + mi.getInterpet() +" - "+ mi.getAlbum() +" - " + mi.getTitel() +"mp3";
+		
+		new File(DEFAULT_PATH).mkdirs();
+		String path = DEFAULT_PATH + mi.getInterpet() +" - "+ mi.getAlbum() +" - " + mi.getTitel() +".mp3";
 		
 		File f = new File(path);
 		if(!f.exists()){
+			try {
+				f.createNewFile();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			System.out.println(f.getAbsolutePath());
 			FileOutputStream fos = null;
 			try {
 				fos = new FileOutputStream(f);
@@ -80,11 +90,21 @@ public final class FileFunction {
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 			    byte[] dataBytes = rs.getBytes(1);
-			    try {
-					bfos.write(dataBytes);
-				} catch (IOException e) {
-					System.err.println("Couldnt write data");
-					e.printStackTrace();
+			    if(dataBytes.length > 0){
+			    	try {
+			    		/*int count = 0;
+			    		for (byte b : dataBytes) {
+							System.out.println(count + "\t| " + b);
+			    			count++;
+			    			
+			    			//fos.write(b);
+						}*/
+			    		bfos.write(dataBytes, 0, dataBytes.length);
+						//fos.write(dataBytes);
+					} catch (Exception e) {
+						System.err.println("Couldnt write data");
+						e.printStackTrace();
+					}
 				}
 			}
 			rs.close();
@@ -92,6 +112,6 @@ public final class FileFunction {
 		}else{
 			System.out.println("Datei bereits vorhanden");
 		}
-		return path;			
+		return f.getAbsolutePath();			
 	}
 }

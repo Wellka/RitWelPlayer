@@ -1,54 +1,58 @@
 package Frames;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JTable;
-import javax.swing.JLabel;
-import javax.swing.JButton;
-
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
-import javax.swing.border.BevelBorder;
-import javax.swing.JPanel;
+import javax.imageio.ImageIO;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
-
-import org.jaudiotagger.tag.reference.PictureTypes;
-
-import cal.ImagePanel;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableModel;
 
 import musikData.MusikInformation;
-
+import Frames.Dialogs.DlgAddFriend;
 import Frames.Dialogs.DlgFileSearch;
+import Frames.Dialogs.DlgStatistik;
 import Main.Kontrolle;
-import SQL.PSQLConnection;
+import cal.FileFunction;
+import cal.ImagePanel;
 
 public class FrmMain {
 
+	//objekte die nachträglich verändert werden müssen, mussten hier oben eingetragen werden
 	private JFrame frame;
-	private JTable tblMusik;
-	private JTable tblFrinds;
 	private JTextField edtSearch;
 
 	private ImagePanel pnlPic;
 	private Kontrolle kontrolle;
+	private ArrayList<MusikInformation> musikinformations = null;
+	private JTable tblMusik;
+	private JButton btnPlay;
+	private JTable tblFriends;
 	/**
 	 * Create the application.
 	 */
 	public FrmMain(Kontrolle kontrolle) {
-		initialize();
 		this.kontrolle = kontrolle;
+		initialize();
 		frame.setVisible(true);
 	}
 
@@ -63,17 +67,8 @@ public class FrmMain {
 		frame.getContentPane().setLayout(null);
         KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         manager.addKeyEventDispatcher(new MyDispatcher());
-		
-		tblMusik = new JTable();
-		tblMusik.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		tblMusik.setBounds(0, 71, 544, 281);
-		frame.getContentPane().add(tblMusik);
-		
-		tblFrinds = new JTable();
-		tblFrinds.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		tblFrinds.setBounds(554, 71, 160, 281);
-		frame.getContentPane().add(tblFrinds);
-		
+
+		frame.getContentPane().add(new JScrollPane());
 		JButton btnStop = new JButton("Stop");
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -83,13 +78,14 @@ public class FrmMain {
 		btnStop.setBounds(256, 411, 89, 23);
 		frame.getContentPane().add(btnStop);
 		
-		JButton btnForw = new JButton("<<");
-		btnForw.setBounds(388, 411, 49, 23);
-		frame.getContentPane().add(btnForw);
-		
-		JButton btnBack = new JButton(">>");
-		btnBack.setBounds(447, 411, 49, 23);
-		frame.getContentPane().add(btnBack);
+		JButton btnReload = new JButton("Aktualisieren");
+		btnReload.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				updateGlobalMusikInformations();
+			}
+		});
+		btnReload.setBounds(401, 359, 143, 23);
+		frame.getContentPane().add(btnReload);
 		
 		pnlPic = new ImagePanel();
 		pnlPic.setBounds(10, 359, 90, 90);
@@ -99,7 +95,7 @@ public class FrmMain {
 		pnlLogo.setBounds(554, 11, 160, 50);
 		frame.getContentPane().add(pnlLogo);
 		try {
-			pnlLogo.setImage(ImageIO.read(new File(getClass().getResource("/resource/player.jpg").getPath())));
+			pnlLogo.setImage(ImageIO.read(new File("./player.jpg").getAbsoluteFile()));
 		} catch (IOException e1) {}
 		
 		JLabel lblTrack = new JLabel("");
@@ -107,11 +103,60 @@ public class FrmMain {
 		frame.getContentPane().add(lblTrack);
 		
 		JButton btnAddBuddy = new JButton("Add Buddy");
-		btnAddBuddy.setBounds(554, 363, 146, 23);
+		btnAddBuddy.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String benutzername = new DlgAddFriend().getString();
+				if(benutzername != ""){
+					String query = "SELECT ID FROM benutzer WHERE benutzer = ?;";
+					PreparedStatement ps = null;
+					try{
+						ps = kontrolle.getSqlConnection().getConnection().prepareStatement(query);
+						ps.setString(1, benutzername);
+						ResultSet res = ps.executeQuery();
+		
+						//wenn benutzer vorhanden dann
+						if(res.next()){
+							int id = res.getInt(1);
+							query = "INSERT INTO benutzer_benutzer (id_benutzer1, id_benutzer2) VALUES (?, ?);";
+							ps = kontrolle.getSqlConnection().getConnection().prepareStatement(query);
+							ps.setInt(1, kontrolle.getActiveUserID());
+							ps.setInt(2, id);
+							ps.execute();
+							
+							kontrolle.updateUserFriends();	
+							tblFriends.setModel(new FriendTableModel());
+						}else{
+							JOptionPane.showMessageDialog(frame, "Benutzer nicht vorhanden");
+						}
+					}catch(SQLException e){
+						e.printStackTrace();
+					}	
+				}
+			}
+		});
+		btnAddBuddy.setBounds(554, 411, 101, 23);
 		frame.getContentPane().add(btnAddBuddy);
 		
-		JButton btnDelBuddy = new JButton("Del Buddy");
-		btnDelBuddy.setBounds(554, 389, 146, 23);
+		JButton btnDelBuddy = new JButton("Del");
+		btnDelBuddy.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PreparedStatement ps = null;
+				int id = kontrolle.getUserFriends().get(tblFriends.getSelectedRow());
+				String query = "DELETE FROM benutzer_benutzer WHERE id_benutzer1 = ? AND id_benutzer2 = ?;";
+				try{
+					ps = kontrolle.getSqlConnection().getConnection().prepareStatement(query);
+					ps.setInt(1, kontrolle.getActiveUserID());
+					ps.setInt(2, id);
+					ps.execute();
+					
+					kontrolle.updateUserFriends();	
+					tblFriends.setModel(new FriendTableModel());
+				}catch(SQLException err){
+					err.printStackTrace();
+				}
+			}
+		});
+		btnDelBuddy.setBounds(654, 411, 60, 23);
 		frame.getContentPane().add(btnDelBuddy);
 		
 		edtSearch = new JTextField();
@@ -126,21 +171,77 @@ public class FrmMain {
 		JButton btnNewButton = new JButton("Search and upload new songs");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				new DlgFileSearch(kontrolle.getSqlConnection(), 1);
+				new DlgFileSearch(kontrolle.getSqlConnection(), kontrolle.getActiveUserID());
+				updateGlobalMusikInformations();
 			}
 		});
 		btnNewButton.setBounds(5, 11, 539, 27);
 		frame.getContentPane().add(btnNewButton);
 		
-		JButton btnPlay = new JButton("Play");
+		btnPlay = new JButton("Play");
 		btnPlay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				playSong();
 			}
 		});
-		btnPlay.setBounds(157, 411, 89, 23);
+		btnPlay.setBounds(121, 411, 125, 23);
 		frame.getContentPane().add(btnPlay);
 		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(5, 76, 539, 276);
+		frame.getContentPane().add(scrollPane);
+		
+		tblMusik = new JTable(new MusikTableModel());
+		scrollPane.setViewportView(tblMusik);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(554, 72, 160, 337);
+		frame.getContentPane().add(scrollPane_1);
+		
+		tblFriends = new JTable(new FriendTableModel());
+		scrollPane_1.setViewportView(tblFriends);
+		
+		JButton btnScore = new JButton("Score");
+		btnScore.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new DlgStatistik(kontrolle.getSqlConnection().getConnection());
+			}
+		});
+		btnScore.setBounds(401, 411, 143, 23);
+		frame.getContentPane().add(btnScore);
+		tblMusik.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				MusikInformation mi = musikinformations.get(tblMusik.getSelectedRow());
+				if(FileFunction.checkIfFileAlreadyDownloaded(mi)){	
+					btnPlay.setText("Play");
+				}
+				else{
+					btnPlay.setText("Download");
+				}
+			}
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		updateGlobalMusikInformations();
+	}
+	
+	public void updateGlobalMusikInformations(){
+		//daten holen
+		try {
+			System.out.println(kontrolle);
+			musikinformations = kontrolle.getAllMusikFromDB(Kontrolle.ALL_USERS);
+			tblMusik.setModel(new MusikTableModel());
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	private class MyDispatcher implements KeyEventDispatcher {
@@ -160,15 +261,132 @@ public class FrmMain {
    	}	 
 	 
 	private void playSong(){
-		MusikInformation mInformation = new MusikInformation("C:\\Musik\\Pendulum - Immersion\\05 - crush.mp3");
-		BufferedImage albumart = mInformation.getAlbumArt();
-		albumart = pnlPic.scaleImage(albumart, pnlPic.getWidth(), pnlPic.getHeight());
-		
-		pnlPic.setImage(albumart);
-		kontrolle.playMusik("C:\\Musik\\Pendulum - Immersion\\05 - crush.mp3");
+		//musik laden
+		MusikInformation mi = musikinformations.get(tblMusik.getSelectedRow());
+		try {
+			String derp = FileFunction.downloadToFile("musikdaten", "data", kontrolle.getSqlConnection().getConnection(), mi);
+			mi.setPfad(derp);
+			kontrolle.playMusik(derp);
+			//wennn hier eh immer spielen
+			btnPlay.setText("Play");
+			tblMusik.repaint();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void stopSong(){
 		kontrolle.stopMusik();
+	}
+	
+	private class FriendTableModel implements TableModel{
+
+		@Override
+		public void addTableModelListener(TableModelListener arg0) {}
+
+		@Override
+		public Class<?> getColumnClass(int arg0) {
+			return String.class;
+		}
+
+		@Override
+		public int getColumnCount() {
+			return 1;
+		}
+
+		@Override
+		public String getColumnName(int arg0) {
+			return "Name";
+		}
+
+		@Override
+		public int getRowCount() {
+			ArrayList<?> friendIDs = kontrolle.getUserFriends();
+			if(friendIDs != null)
+				return friendIDs.size();
+			return 0;
+		}
+
+		@Override
+		public Object getValueAt(int row, int col) {
+			return kontrolle.getUserNameById(kontrolle.getUserFriends().get(row));
+		}
+
+		@Override
+		public boolean isCellEditable(int arg0, int arg1) {
+			return false; //not editable
+		}
+
+		@Override
+		public void removeTableModelListener(TableModelListener arg0) {}
+
+		@Override
+		public void setValueAt(Object arg0, int arg1, int arg2) {}
+		
+	}
+	
+	private class MusikTableModel implements TableModel{
+
+		@Override
+		public void setValueAt(Object arg0, int arg1, int arg2) {
+			
+		}
+		
+		@Override
+		public void removeTableModelListener(TableModelListener arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public boolean isCellEditable(int arg0, int arg1) {
+			return false; //edit not allowed
+		}
+		
+		@Override
+		public Object getValueAt(int row, int col) {
+			switch(col){
+			case 0:
+				return ""+musikinformations.get(row).getTitel();
+			case 1:
+				return ""+musikinformations.get(row).getInterpet();
+			case 2:
+				return ""+musikinformations.get(row).getAlbum();
+			case 3:
+				return ""+musikinformations.get(row).getGenre();
+			case 4:
+				if(FileFunction.checkIfFileAlreadyDownloaded(musikinformations.get(row)))
+					return "x";
+			break;
+			}
+			return "";
+		}
+		
+		@Override
+		public int getRowCount() {
+			return musikinformations.size();
+		}
+		
+		@Override
+		public String getColumnName(int arg0) {
+			final String[] colnames = {"Titel","Interpret", "Album", "Genre", "Downloaded"};
+			System.out.println(colnames);
+			return colnames[arg0];
+		}
+		
+		@Override
+		public int getColumnCount() {
+			return 5;
+		}
+		
+		@Override
+		public Class<?> getColumnClass(int arg0) {
+			return String.class; //ausgabeklasse ist String
+		}
+		
+		@Override
+		public void addTableModelListener(TableModelListener arg0) {
+			// TODO Auto-generated method stub
+		}
 	}
 }

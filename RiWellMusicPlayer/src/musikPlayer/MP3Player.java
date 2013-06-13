@@ -1,8 +1,9 @@
 package musikPlayer;
 
-import javazoom.jl.player.Player;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 
-import java.io.*;
+import javazoom.jl.player.Player;
 
 public class MP3Player extends MusikPlayer{
 

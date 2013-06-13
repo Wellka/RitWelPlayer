@@ -1,17 +1,17 @@
 package Frames.Dialogs;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JFormattedTextField;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.text.NumberFormat;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public class DlgConnectionOption extends JDialog {
 	private static final long serialVersionUID = 1L;
@@ -22,6 +22,7 @@ public class DlgConnectionOption extends JDialog {
 	private JFormattedTextField formattedTextField;
 
 	private int result = -1;
+	private JTextField txtDbprojekt;
 	/**
 	 * Create the dialog.
 	 */
@@ -33,7 +34,7 @@ public class DlgConnectionOption extends JDialog {
 		super(dlg, modal);
 		setTitle("Verbindungsoptionen");
 		setResizable(false);
-		setBounds(100, 100, 503, 272);
+		setBounds(100, 100, 503, 243);
 		getContentPane().setLayout(new BorderLayout());
 		
 		JPanel ContentPane = new JPanel();
@@ -43,12 +44,7 @@ public class DlgConnectionOption extends JDialog {
 		JPanel panel = new JPanel();
 		ContentPane.add(panel, BorderLayout.NORTH);
 		
-		JLabel lblWarunungUndSo = new JLabel("<HTML>" +
-				"Hinweis:\r\n" +
-				"<br>Bitte geben Sie die Daten für den Datenbank-Connect an.\r\n" +
-				"<br>Bei SU-Rechten kann die Datenbank direkt angelegt werden.\r\n" +
-				"<br>" +
-				"</HTML>");
+		JLabel lblWarunungUndSo = new JLabel("<HTML>Hinweis:\r\n<br>Bitte geben Sie die Daten f\u00FCr den Datenbank-Connect an.</HTML>");
 		panel.add(lblWarunungUndSo);
 		
 		JPanel panel_1 = new JPanel();
@@ -72,16 +68,19 @@ public class DlgConnectionOption extends JDialog {
 		panel_1.add(lblSuperUserPasswort);
 		
 		edtServerAddress = new JTextField();
+		edtServerAddress.setText("localhost");
 		edtServerAddress.setBounds(192, 11, 257, 20);
 		panel_1.add(edtServerAddress);
 		edtServerAddress.setColumns(10);
 		
 		edtLogin = new JTextField();
+		edtLogin.setText("projekt");
 		edtLogin.setColumns(10);
 		edtLogin.setBounds(192, 61, 257, 20);
 		panel_1.add(edtLogin);
 		
 		edtPassword = new JTextField();
+		edtPassword.setText("geheim");
 		edtPassword.setColumns(10);
 		edtPassword.setBounds(192, 86, 257, 20);
 		panel_1.add(edtPassword);
@@ -89,12 +88,24 @@ public class DlgConnectionOption extends JDialog {
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setGroupingUsed(false);
 		formattedTextField = new JFormattedTextField(nf);
+		formattedTextField.setText("5432");
 		formattedTextField.setBounds(192, 36, 257, 20);
 		panel_1.add(formattedTextField);
 		
 		final JCheckBox chckbxDatenbankAnlegen = new JCheckBox("Datenbank anlegen");
-		chckbxDatenbankAnlegen.setBounds(192, 113, 129, 23);
+		chckbxDatenbankAnlegen.setEnabled(false);
+		chckbxDatenbankAnlegen.setBounds(331, 166, 129, 23);
 		panel_1.add(chckbxDatenbankAnlegen);
+		
+		JLabel lblDatabase = new JLabel("Datenbank name");
+		lblDatabase.setBounds(10, 111, 172, 14);
+		panel_1.add(lblDatabase);
+		
+		txtDbprojekt = new JTextField();
+		txtDbprojekt.setText("dbprojekt");
+		txtDbprojekt.setColumns(10);
+		txtDbprojekt.setBounds(192, 111, 257, 20);
+		panel_1.add(txtDbprojekt);
 		chckbxDatenbankAnlegen.addActionListener(new ActionListener() {
 			
 			@Override
@@ -161,6 +172,10 @@ public class DlgConnectionOption extends JDialog {
 	
 	public int getResult(){
 		return result;
+	}
+	
+	public String getDatabase(){
+		return txtDbprojekt.getText();
 	}
 }
 

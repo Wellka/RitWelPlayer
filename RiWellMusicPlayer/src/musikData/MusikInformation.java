@@ -8,7 +8,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Calendar;
 
 import javax.swing.ImageIcon;
@@ -33,6 +32,7 @@ public class MusikInformation {
 	private String titel = "";
 	private String pfad = "";
 	private String genre = "";
+	private int owner = INVALID_ID;
 	private int id = INVALID_ID;	
 
 	private BufferedImage albumArt;
@@ -67,6 +67,16 @@ public class MusikInformation {
 			interpet += t.getFirst(tagf.getId());
 		}
 		
+		album = "";
+		first = true;
+		for (TagField tagf : t.getFields(FieldKey.ALBUM)) {
+			if(!first){
+				album += ", ";
+			}
+			first = false;
+			album += t.getFirst(tagf.getId());
+		}
+		System.err.println(album);
 		genre = "";
 		first = true;
 		for (TagField tagf : t.getFields(FieldKey.GENRE)) {
@@ -91,7 +101,7 @@ public class MusikInformation {
 		}	
 	}
 	
-	public MusikInformation(String interpet, String album, String titel, String pfad, BufferedImage albumArt, int id) {
+	public MusikInformation(String interpet, String album, String titel, String pfad, String genre, int owner, BufferedImage albumArt, int id) {
 		super();
 		
 		this.interpet = interpet;
@@ -100,6 +110,8 @@ public class MusikInformation {
 		this.pfad = pfad;
 		this.albumArt = albumArt;
 		this.id = id;
+		this.genre = genre;
+		this.owner = owner;
 	}
 
 	public String getPfad() {
@@ -116,6 +128,10 @@ public class MusikInformation {
 
 	public void setInterpet(String interpet) {
 		this.interpet = interpet;
+	}
+	
+	public String getGenre(){
+		return this.genre;
 	}
 
 	public String getAlbum() {
@@ -266,5 +282,10 @@ public class MusikInformation {
 		}  
 		
 		return query;
+	}
+	
+	@Override
+	public String toString() { 
+		return ""+ interpet + "\t| " + album + "\t| " + titel + "\t| " + pfad + "\t| " + genre + "\t| " + owner + "\t| " + id;
 	}
 }
