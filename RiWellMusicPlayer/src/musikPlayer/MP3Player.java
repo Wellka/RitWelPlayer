@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 
 import javazoom.jl.player.Player;
 
+/**
+ * @author Florian Ritterbusch
+ */
 public class MP3Player extends MusikPlayer{
 
 	private Player player;

@@ -32,6 +32,9 @@ import cal.FileFunction;
 import cal.fileTreeSearch.FileSearchListener;
 import cal.fileTreeSearch.TreeFileSearch;
 
+/**
+ * @author Kay Wellinger
+ */
 public class DlgFileSearch extends JDialog implements FileSearchListener {
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();

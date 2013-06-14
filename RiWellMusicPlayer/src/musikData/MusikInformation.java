@@ -24,6 +24,9 @@ import org.jaudiotagger.tag.TagField;
 
 import SQL.PSQLConnection;
 
+/**
+ * @author Kay Wellinger
+ */
 public class MusikInformation {
 
 	public static final int INVALID_ID = -1;

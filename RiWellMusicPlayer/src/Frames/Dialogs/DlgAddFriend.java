@@ -10,6 +10,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+/**
+ * @author Florian Ritterbusch
+ */
 public class DlgAddFriend extends JDialog {
 
 	/**

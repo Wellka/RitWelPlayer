@@ -1,7 +1,9 @@
 package musikPlayer;
 
 public abstract class MusikPlayer{
-
+	/**
+	 * @author Kay Wellinger
+	 */
 	String filename;
 	boolean bStopped = false;
 	MusikPlayer mp;

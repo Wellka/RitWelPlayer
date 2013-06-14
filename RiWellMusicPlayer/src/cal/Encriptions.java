@@ -3,7 +3,9 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-
+/**
+ * @author Kay Wellinger
+ */
 public abstract class Encriptions {
 	public static String StringToMD5(String string){
 		//einheitlich zu utf8 (sonst anderes MD5 weil linux)

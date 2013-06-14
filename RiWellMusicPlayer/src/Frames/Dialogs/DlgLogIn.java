@@ -23,9 +23,8 @@ import javax.swing.border.EmptyBorder;
 import cal.ImagePanel;
 
 public class DlgLogIn extends JDialog {
-
 	/**
-	 * 
+	 * @author Kay Wellinger
 	 */
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();

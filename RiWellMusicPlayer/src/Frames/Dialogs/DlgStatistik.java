@@ -24,6 +24,9 @@ import javax.swing.JTable;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+/**
+ * @author Kay Wellinger
+ */
 public class DlgStatistik extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();

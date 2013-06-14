@@ -23,7 +23,9 @@ import Frames.Dialogs.DlgLogIn;
 import SQL.PSQLConnection;
 import cal.Encriptions;
 
-
+/**
+ * @author Kay Wellinger
+ */
 public class Kontrolle {
 
 	private PSQLConnection psqlCon;
@@ -243,7 +245,7 @@ public class Kontrolle {
 		return activeUserID;
 	}
 	public static final int ALL_USERS = -1;
-	public ArrayList<MusikInformation> getAllMusikFromDB(int onlyFromUser) throws SQLException{
+	public ArrayList<MusikInformation> getAllMusikFromDB(int onlyFromUser, String search) throws SQLException{
 		ArrayList<MusikInformation> musikinformations =  new ArrayList<MusikInformation>();
 		/*"SELECT md.id,md.benutzer_id,md.titel,g.genre,a.albumname,i.interpret FROM musikdaten md "+
 		"INNER JOIN musikdaten_album ma ON md.id = ma.id_musik "+
@@ -252,9 +254,28 @@ public class Kontrolle {
 		"INNER JOIN genre g ON g.id = mg.id_genre "+
 		"INNER JOIN interpret i ON mi.id_interpret = i.id "+
 		"INNER JOIN album a ON ma.id_album = a.id;"; */
-		String query = "SELECT * FROM alletitel;";
-				
-		ResultSet result = statement.executeQuery(query);
+		//SELECT * FROM alletitel WHERE interpret LIKE '%Jean%' OR titel LIKE '%Jean%' OR genre LIKE '%Jean%' OR albumname LIKE '%jean%';
+		if(search != null)
+			if(search.equals(""))
+				search = null;
+		
+		String query = "SELECT * FROM alletitel";
+		
+		if(search != null){
+			query += " WHERE interpret LIKE ? OR titel LIKE ? OR genre LIKE ? OR albumname LIKE ?";
+		}
+		query += ";";
+		PreparedStatement ps = connection.prepareStatement(query);
+		if(search != null){
+			search = "%" + search + "%";
+			System.out.println(query);
+			for (int i = 1; i < 5; i++) {
+				ps.setString(i, search);
+			}
+			System.out.println(search + " || " + ps.toString());
+		}
+		
+		ResultSet result = ps.executeQuery();//statement.executeQuery(query);
 	
 		while(result.next()){
 			int idUser = result.getInt(2); //id benutzer

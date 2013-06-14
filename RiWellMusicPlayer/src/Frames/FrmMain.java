@@ -2,6 +2,7 @@ package Frames;
 
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -35,6 +36,9 @@ import Main.Kontrolle;
 import cal.FileFunction;
 import cal.ImagePanel;
 
+/**
+ * @author Kay Wellinger
+ */
 public class FrmMain {
 
 	//objekte die nachträglich verändert werden müssen, mussten hier oben eingetragen werden
@@ -47,6 +51,7 @@ public class FrmMain {
 	private JTable tblMusik;
 	private JButton btnPlay;
 	private JTable tblFriends;
+	private int selectedUserID;
 	/**
 	 * Create the application.
 	 */
@@ -78,10 +83,13 @@ public class FrmMain {
 		btnStop.setBounds(256, 411, 89, 23);
 		frame.getContentPane().add(btnStop);
 		
-		JButton btnReload = new JButton("Aktualisieren");
+		JButton btnReload = new JButton("Reload/Reset");
 		btnReload.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				updateGlobalMusikInformations();
+				//zurücksetzen
+				selectedUserID = Kontrolle.ALL_USERS;
+				edtSearch.setText("");
+				updateGlobalMusikInformations(null);
 			}
 		});
 		btnReload.setBounds(401, 359, 143, 23);
@@ -141,6 +149,8 @@ public class FrmMain {
 		btnDelBuddy.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				PreparedStatement ps = null;
+				if(tblFriends.getSelectedRow() < 0)
+					return;
 				int id = kontrolle.getUserFriends().get(tblFriends.getSelectedRow());
 				String query = "DELETE FROM benutzer_benutzer WHERE id_benutzer1 = ? AND id_benutzer2 = ?;";
 				try{
@@ -165,6 +175,11 @@ public class FrmMain {
 		edtSearch.setColumns(10);
 		
 		JButton btnSearch = new JButton("Search");
+		btnSearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				updateGlobalMusikInformations(edtSearch.getText());			
+			}
+		});
 		btnSearch.setBounds(455, 48, 89, 23);
 		frame.getContentPane().add(btnSearch);
 		
@@ -172,7 +187,7 @@ public class FrmMain {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				new DlgFileSearch(kontrolle.getSqlConnection(), kontrolle.getActiveUserID());
-				updateGlobalMusikInformations();
+				updateGlobalMusikInformations(null);
 			}
 		});
 		btnNewButton.setBounds(5, 11, 539, 27);
@@ -199,9 +214,31 @@ public class FrmMain {
 		frame.getContentPane().add(scrollPane_1);
 		
 		tblFriends = new JTable(new FriendTableModel());
+		tblFriends.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+			  	System.out.println("Mouse clicked");
+			  	
+			  	Point p = arg0.getPoint();
+			  	int selected = tblFriends.rowAtPoint(arg0.getPoint());
+			  	System.out.println(selected);
+			  	
+			  	selectedUserID = kontrolle.getUserFriends().get(selected);
+			  	updateGlobalMusikInformations(edtSearch.getText());
+			}
+			@Override
+			public void mousePressed(MouseEvent arg0) {}			
+			@Override
+			public void mouseExited(MouseEvent arg0) {}			
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}			
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
 		scrollPane_1.setViewportView(tblFriends);
 		
-		JButton btnScore = new JButton("Score");
+		JButton btnScore = new JButton("Statistik");
 		btnScore.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new DlgStatistik(kontrolle.getSqlConnection().getConnection());
@@ -230,14 +267,16 @@ public class FrmMain {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
 		});
-		updateGlobalMusikInformations();
+		
+		selectedUserID = Kontrolle.ALL_USERS;
+		updateGlobalMusikInformations(null);
 	}
 	
-	public void updateGlobalMusikInformations(){
+	public void updateGlobalMusikInformations(String search){
 		//daten holen
 		try {
-			System.out.println(kontrolle);
-			musikinformations = kontrolle.getAllMusikFromDB(Kontrolle.ALL_USERS);
+			musikinformations = kontrolle.getAllMusikFromDB(selectedUserID, search);
+			//aktualisieren
 			tblMusik.setModel(new MusikTableModel());
 		} catch (SQLException e1) {
 			e1.printStackTrace();
@@ -262,8 +301,11 @@ public class FrmMain {
 	 
 	private void playSong(){
 		//musik laden
+		if(tblMusik.getSelectedRow() < 0)
+			return;
 		MusikInformation mi = musikinformations.get(tblMusik.getSelectedRow());
 		try {
+			//datei rutnerladen
 			String derp = FileFunction.downloadToFile("musikdaten", "data", kontrolle.getSqlConnection().getConnection(), mi);
 			mi.setPfad(derp);
 			kontrolle.playMusik(derp);
@@ -345,6 +387,7 @@ public class FrmMain {
 		
 		@Override
 		public Object getValueAt(int row, int col) {
+			//einfügen der daten in die tabelle
 			switch(col){
 			case 0:
 				return ""+musikinformations.get(row).getTitel();
@@ -369,6 +412,7 @@ public class FrmMain {
 		
 		@Override
 		public String getColumnName(int arg0) {
+			//kopfzeile
 			final String[] colnames = {"Titel","Interpret", "Album", "Genre", "Downloaded"};
 			System.out.println(colnames);
 			return colnames[arg0];

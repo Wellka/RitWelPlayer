@@ -12,7 +12,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import musikData.MusikInformation;
-
+/**
+ * @author Florian Ritterbusch
+ */
 public final class FileFunction {
 
 	public static boolean uploadFile(String table, String colName, Connection connection, String path, int iD){
@@ -55,6 +57,7 @@ public final class FileFunction {
 		
 		return true;
 	}
+	
 	private final static String DEFAULT_PATH = "./Download/"; 
 	
 	public static boolean checkIfFileAlreadyDownloaded(MusikInformation mi){
@@ -75,9 +78,7 @@ public final class FileFunction {
 		if(!f.exists()){
 			try {
 				f.createNewFile();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			} catch (IOException e1) {e1.printStackTrace();
 			}
 			System.out.println(f.getAbsolutePath());
 			FileOutputStream fos = null;
@@ -85,6 +86,7 @@ public final class FileFunction {
 				fos = new FileOutputStream(f);
 			} catch (FileNotFoundException e) {
 			}
+			//steams öffnen
 			BufferedOutputStream bfos= new BufferedOutputStream(fos);
 			PreparedStatement ps = con.prepareStatement("SELECT "+colName+" FROM "+table+" WHERE id = "+ mi.getID());
 			ResultSet rs = ps.executeQuery();
@@ -92,13 +94,7 @@ public final class FileFunction {
 			    byte[] dataBytes = rs.getBytes(1);
 			    if(dataBytes.length > 0){
 			    	try {
-			    		/*int count = 0;
-			    		for (byte b : dataBytes) {
-							System.out.println(count + "\t| " + b);
-			    			count++;
-			    			
-			    			//fos.write(b);
-						}*/
+			    		//daten schreiben
 			    		bfos.write(dataBytes, 0, dataBytes.length);
 						//fos.write(dataBytes);
 					} catch (Exception e) {

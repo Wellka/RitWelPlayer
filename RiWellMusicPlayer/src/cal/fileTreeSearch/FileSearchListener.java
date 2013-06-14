@@ -2,6 +2,10 @@ package cal.fileTreeSearch;
 
 import java.util.Vector;
 
+/**
+ * @author Kay Wellinger
+ */
+
 public interface FileSearchListener {
 	public void onFolderFound(String lastfolderPath, long count);
 	public void onProgress(long count, long max);

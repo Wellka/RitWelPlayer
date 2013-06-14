@@ -6,6 +6,9 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
+/**
+ * @author Kay Wellinger
+ */
 public class ImagePanel extends JPanel{
 
 	private static final long serialVersionUID = 1L;

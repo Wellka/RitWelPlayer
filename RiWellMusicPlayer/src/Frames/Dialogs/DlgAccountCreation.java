@@ -18,7 +18,9 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import cal.Encriptions;
-
+/**
+ * @author Florian Ritterbusch
+ */
 public class DlgAccountCreation extends JDialog {
 
 	/**
