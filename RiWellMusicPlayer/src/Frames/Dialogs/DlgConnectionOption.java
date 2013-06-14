@@ -36,7 +36,7 @@ public class DlgConnectionOption extends JDialog {
 	
 	public DlgConnectionOption(JDialog dlg, boolean modal) {
 		super(dlg, modal);
-		setTitle("Verbindungsoptionen");
+		setTitle("HalfBeatPlayer - Verbindungsoptionen");
 		setResizable(false);
 		setBounds(100, 100, 503, 243);
 		getContentPane().setLayout(new BorderLayout());

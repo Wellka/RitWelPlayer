@@ -42,7 +42,7 @@ import cal.ImagePanel;
 public class FrmMain {
 
 	//objekte die nachträglich verändert werden müssen, mussten hier oben eingetragen werden
-	private JFrame frame;
+	private JFrame frmHalfbeatplayer;
 	private JTextField edtSearch;
 
 	private ImagePanel pnlPic;
@@ -58,22 +58,23 @@ public class FrmMain {
 	public FrmMain(Kontrolle kontrolle) {
 		this.kontrolle = kontrolle;
 		initialize();
-		frame.setVisible(true);
+		frmHalfbeatplayer.setVisible(true);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.setResizable(false);
-		frame.setBounds(100, 100, 726, 480);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		frmHalfbeatplayer = new JFrame();
+		frmHalfbeatplayer.setTitle("HalfBeatPlayer");
+		frmHalfbeatplayer.setResizable(false);
+		frmHalfbeatplayer.setBounds(100, 100, 726, 480);
+		frmHalfbeatplayer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmHalfbeatplayer.getContentPane().setLayout(null);
         KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         manager.addKeyEventDispatcher(new MyDispatcher());
 
-		frame.getContentPane().add(new JScrollPane());
+		frmHalfbeatplayer.getContentPane().add(new JScrollPane());
 		JButton btnStop = new JButton("Stop");
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -81,7 +82,7 @@ public class FrmMain {
 			}
 		});
 		btnStop.setBounds(256, 411, 89, 23);
-		frame.getContentPane().add(btnStop);
+		frmHalfbeatplayer.getContentPane().add(btnStop);
 		
 		JButton btnReload = new JButton("Reload/Reset");
 		btnReload.addActionListener(new ActionListener() {
@@ -93,22 +94,22 @@ public class FrmMain {
 			}
 		});
 		btnReload.setBounds(401, 359, 143, 23);
-		frame.getContentPane().add(btnReload);
+		frmHalfbeatplayer.getContentPane().add(btnReload);
 		
 		pnlPic = new ImagePanel();
 		pnlPic.setBounds(10, 359, 90, 90);
-		frame.getContentPane().add(pnlPic);
+		frmHalfbeatplayer.getContentPane().add(pnlPic);
 		
 		ImagePanel pnlLogo = new ImagePanel();
 		pnlLogo.setBounds(554, 11, 160, 50);
-		frame.getContentPane().add(pnlLogo);
+		frmHalfbeatplayer.getContentPane().add(pnlLogo);
 		try {
 			pnlLogo.setImage(ImageIO.read(new File("./player.jpg").getAbsoluteFile()));
 		} catch (IOException e1) {}
 		
 		JLabel lblTrack = new JLabel("");
 		lblTrack.setBounds(144, 375, 375, 25);
-		frame.getContentPane().add(lblTrack);
+		frmHalfbeatplayer.getContentPane().add(lblTrack);
 		
 		JButton btnAddBuddy = new JButton("Add Buddy");
 		btnAddBuddy.addActionListener(new ActionListener() {
@@ -134,7 +135,7 @@ public class FrmMain {
 							kontrolle.updateUserFriends();	
 							tblFriends.setModel(new FriendTableModel());
 						}else{
-							JOptionPane.showMessageDialog(frame, "Benutzer nicht vorhanden");
+							JOptionPane.showMessageDialog(frmHalfbeatplayer, "Benutzer nicht vorhanden");
 						}
 					}catch(SQLException e){
 						e.printStackTrace();
@@ -143,7 +144,7 @@ public class FrmMain {
 			}
 		});
 		btnAddBuddy.setBounds(554, 411, 101, 23);
-		frame.getContentPane().add(btnAddBuddy);
+		frmHalfbeatplayer.getContentPane().add(btnAddBuddy);
 		
 		JButton btnDelBuddy = new JButton("Del");
 		btnDelBuddy.addActionListener(new ActionListener() {
@@ -167,11 +168,11 @@ public class FrmMain {
 			}
 		});
 		btnDelBuddy.setBounds(654, 411, 60, 23);
-		frame.getContentPane().add(btnDelBuddy);
+		frmHalfbeatplayer.getContentPane().add(btnDelBuddy);
 		
 		edtSearch = new JTextField();
 		edtSearch.setBounds(5, 49, 440, 20);
-		frame.getContentPane().add(edtSearch);
+		frmHalfbeatplayer.getContentPane().add(edtSearch);
 		edtSearch.setColumns(10);
 		
 		JButton btnSearch = new JButton("Search");
@@ -181,7 +182,7 @@ public class FrmMain {
 			}
 		});
 		btnSearch.setBounds(455, 48, 89, 23);
-		frame.getContentPane().add(btnSearch);
+		frmHalfbeatplayer.getContentPane().add(btnSearch);
 		
 		JButton btnNewButton = new JButton("Search and upload new songs");
 		btnNewButton.addActionListener(new ActionListener() {
@@ -191,7 +192,7 @@ public class FrmMain {
 			}
 		});
 		btnNewButton.setBounds(5, 11, 539, 27);
-		frame.getContentPane().add(btnNewButton);
+		frmHalfbeatplayer.getContentPane().add(btnNewButton);
 		
 		btnPlay = new JButton("Play");
 		btnPlay.addActionListener(new ActionListener() {
@@ -200,18 +201,18 @@ public class FrmMain {
 			}
 		});
 		btnPlay.setBounds(121, 411, 125, 23);
-		frame.getContentPane().add(btnPlay);
+		frmHalfbeatplayer.getContentPane().add(btnPlay);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(5, 76, 539, 276);
-		frame.getContentPane().add(scrollPane);
+		frmHalfbeatplayer.getContentPane().add(scrollPane);
 		
 		tblMusik = new JTable(new MusikTableModel());
 		scrollPane.setViewportView(tblMusik);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setBounds(554, 72, 160, 337);
-		frame.getContentPane().add(scrollPane_1);
+		frmHalfbeatplayer.getContentPane().add(scrollPane_1);
 		
 		tblFriends = new JTable(new FriendTableModel());
 		tblFriends.addMouseListener(new MouseListener() {
@@ -245,7 +246,7 @@ public class FrmMain {
 			}
 		});
 		btnScore.setBounds(401, 411, 143, 23);
-		frame.getContentPane().add(btnScore);
+		frmHalfbeatplayer.getContentPane().add(btnScore);
 		tblMusik.addMouseListener(new MouseListener() {
 			
 			@Override

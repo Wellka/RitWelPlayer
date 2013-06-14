@@ -41,10 +41,10 @@ public class DlgLogIn extends JDialog {
 	}
 	public DlgLogIn(Frame frm,boolean modal) {
 		super(frm, modal);
-		setTitle("Login");
+		setTitle("HalfBeatPlayer - Login");
 		result = -1;
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 303, 209);
+		setBounds(100, 100, 303, 237);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -80,7 +80,7 @@ public class DlgLogIn extends JDialog {
 		}
 		
 		lblStatus = new JLabel("");
-		lblStatus.setBounds(10, 172, 267, 14);
+		lblStatus.setBounds(10, 140, 267, 14);
 		contentPanel.add(lblStatus);
 		{
 			JPanel buttonPane = new JPanel();

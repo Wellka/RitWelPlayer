@@ -56,6 +56,7 @@ public class DlgFileSearch extends JDialog implements FileSearchListener {
 	 */
 	public DlgFileSearch(PSQLConnection con, int userID){
 		this(null, true, con, userID);
+		setTitle("HalfBeatPlayer - Dateien Hochladen");
 	}
 	@SuppressWarnings("unchecked")
 	public DlgFileSearch(Frame frm, boolean modal, PSQLConnection con, int userID) {
@@ -198,7 +199,7 @@ public class DlgFileSearch extends JDialog implements FileSearchListener {
 							for (int i = 0; i < listModel.getSize(); i++) {
 								String path = listModel.get(i);
 								
-							
+								System.out.println("actionPerformed(): " +path);
 								TreeFileSearch fts = new TreeFileSearch(fsl, path, rekursiv, ".mp3");
 
 								// schauen ob fertig
@@ -296,7 +297,7 @@ public class DlgFileSearch extends JDialog implements FileSearchListener {
 		}
 		musikInformations.add(mi);
 		System.out.println("uploading file");
-		FileFunction.uploadFile("musikdaten", "data", this.connection.getConnection(), lastfilePath, currentUserId);
+		FileFunction.uploadFile("musikdaten", "data", this.connection.getConnection(), lastfilePath, mi.getID());
 		System.out.println("Finished uploading");
 	}
 

@@ -49,6 +49,7 @@ public class DlgAccountCreation extends JDialog {
 	 */
 	public DlgAccountCreation(JDialog dlg1, boolean modal, Statement state) {
 		super(dlg1, modal);
+		setTitle("HalfBeatPlayer - Account erstellung");
 		if(state == null){
 			return;
 		}
@@ -82,11 +83,11 @@ public class DlgAccountCreation extends JDialog {
 		}
 		
 		Benutzername = new JTextField();
-		Benutzername.setBounds(201, 15, 105, 20);
+		Benutzername.setBounds(201, 15, 138, 20);
 		contentPanel.add(Benutzername);
 		Benutzername.setColumns(10);
 		
-		JButton btnTestUsername = new JButton("C");
+		/*JButton btnTestUsername = new JButton("C");
 		btnTestUsername.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			
@@ -94,7 +95,7 @@ public class DlgAccountCreation extends JDialog {
 		});
 		btnTestUsername.setToolTipText("Pr\u00FCfen ob dieser benutzername schon vorhanden ist");
 		btnTestUsername.setBounds(307, 12, 32, 23);
-		contentPanel.add(btnTestUsername);
+		contentPanel.add(btnTestUsername);*/
 		
 		JLabel lblBenutzername = new JLabel("Benutzername");
 		lblBenutzername.setBounds(10, 18, 181, 14);

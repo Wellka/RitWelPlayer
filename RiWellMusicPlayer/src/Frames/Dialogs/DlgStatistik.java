@@ -41,6 +41,7 @@ public class DlgStatistik extends JDialog {
 	 */
 	public DlgStatistik(Connection con){
 		this(null, true, con);
+		setTitle("HalfBeatPlayer - Statistik");
 	}
 	public DlgStatistik(Frame frm,boolean modal, Connection con) {
 		super(frm, modal);

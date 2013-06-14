@@ -34,15 +34,6 @@ public class Kontrolle {
 	private int activeUserID;
 	private ArrayList<Integer> myFriends = null;
 	
-	//x//TODO Albumscover mit hoch
-	//TODO GROUP BY SHIT
-	//TODO Search funktion
-	//TODO musik nach buddy sortieren
-	//TODO passwort speichern löschen
-	
-	//TODO KAY hat vielleicht heute noch bock liste
-	//TODO 	- Lokal löschen
-	
 	public Kontrolle(){
 		boolean loggedIn = false;
 		

@@ -28,6 +28,7 @@ public class DlgAddFriend extends JDialog {
 	 */
 	public DlgAddFriend(){
 		this(null, true);
+		setTitle("HalfBeatPlayer - Freund hinzuf\u00FCgen");
 	}
 	
 	public DlgAddFriend(JDialog dlg, boolean modal) {
